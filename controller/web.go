@@ -27,7 +27,7 @@ func handleWeb(writer http.ResponseWriter, request *http.Request) {
 		if "nginx-reload" == matches[1] {
 			result = runCmdbyGrep("nginx", "-s", "reload")
 		} else if "nginx-t" == matches[1] {
-			result = runCmdbyGrep("nginx", "-s")
+			result = runCmdbyGrep("nginx", "-t")
 		} else {
 			result = runCmdbyGrep(matches[1])
 		}
