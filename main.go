@@ -1,11 +1,16 @@
 package main
 
 import (
-  "net/http"
-  "ping-base64-webapi/controller"
+	"log"
+	"net/http"
+	"ping-base64-webapi/controller"
 )
 
 func main() {
-  controller.RegisterRoutes()
-  http.ListenAndServe(":10404", nil)
+	log.Println("start")
+	controller.RegisterRoutes()
+	err := http.ListenAndServe(":10404", nil)
+	if err != nil {
+		log.Println(err)
+	}
 }
