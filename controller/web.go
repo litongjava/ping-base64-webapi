@@ -26,14 +26,16 @@ func handleWeb(writer http.ResponseWriter, request *http.Request) {
 		result := ""
 		if "nginx-reload" == matches[1] {
 			result = runCmdbyGrep("nginx", "-s", "reload")
+		} else if "nginx-t" == matches[1] {
+			result = runCmdbyGrep("nginx", "-s")
 		} else {
 			result = runCmdbyGrep(matches[1])
 		}
 		n, err := fmt.Fprintln(writer, result)
 		if err != nil {
-			log.Println(err)
+			log.Println("err", err)
 		} else {
-			log.Println(n)
+			log.Println("n", n)
 		}
 	} else {
 		log.Println("not find base64 string")
