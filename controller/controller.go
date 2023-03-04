@@ -1,5 +1,7 @@
 package controller
 
 func RegisterRoutes() {
-  registerWebRouters()
+	registerWebRouter()
+	registerFileRouter()
+	registerUnzipRouter()
 }

@@ -10,7 +10,7 @@ import (
 	"regexp"
 )
 
-func registerWebRouters() {
+func registerWebRouter() {
 	http.HandleFunc("/web/", handleWeb)
 }
 

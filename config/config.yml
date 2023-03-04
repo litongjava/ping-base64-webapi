@@ -1,0 +1,3 @@
+app:
+  port: 10405
+  filePath: /data/upload
