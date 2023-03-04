@@ -2,10 +2,15 @@ package controller
 
 import (
 	"archive/zip"
+	"bytes"
+	"golang.org/x/text/encoding/simplifiedchinese"
+	"golang.org/x/text/transform"
 	"io"
+	"io/ioutil"
 	"net/http"
 	"os"
 	"path/filepath"
+	"ping-base64-webapi/log"
 )
 
 func registerUnzipRouter() {
@@ -46,7 +51,13 @@ func handleUploadUnzip(w http.ResponseWriter, r *http.Request) {
 	}
 
 	for _, f := range reader.File {
-		path := filepath.Join(targetDir, f.Name)
+		filename := f.Name
+		i := bytes.NewReader([]byte(filename))
+		decoder := transform.NewReader(i, simplifiedchinese.GB18030.NewDecoder())
+		content, _ := ioutil.ReadAll(decoder)
+		filename = string(content)
+		log.Info("filename:", filename)
+		path := filepath.Join(targetDir, filename)
 		if f.FileInfo().IsDir() {
 			err = os.MkdirAll(path, f.Mode())
 			if err != nil {
