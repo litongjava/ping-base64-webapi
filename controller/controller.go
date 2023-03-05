@@ -4,4 +4,5 @@ func RegisterRoutes() {
 	registerWebRouter()
 	registerFileRouter()
 	registerUnzipRouter()
+	registerStatusRouter()
 }

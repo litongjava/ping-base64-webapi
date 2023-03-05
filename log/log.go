@@ -16,17 +16,18 @@ var (
 )
 
 func init() {
-	file, err := os.OpenFile("out.log", os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0666)
+	file, err := os.OpenFile("/opt/ping-base64-webapi/out.log", os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0666)
 	if err != nil {
 		log.Fatalln("can't open log file", err)
 	}
 	flag := log.Ldate | log.Lmicroseconds | log.Lmsgprefix | log.Lshortfile
-
+	writer := io.MultiWriter(file, os.Stdout)
 	LoggerTrace = log.New(ioutil.Discard, "TRACE  ", flag)
 	LoggerDebug = log.New(os.Stdout, "DDEBUG  ", flag)
-	LoggerInfo = log.New(os.Stdout, "INFO  ", flag)
+	LoggerInfo = log.New(file, "INFO  ", flag)
 	LoggerWarn = log.New(os.Stdout, "EARN ", flag)
-	LoggerError = log.New(io.MultiWriter(file, os.Stdout), "ERROR  ", flag)
+	//writer := io.MultiWriter(os.Stdout)
+	LoggerError = log.New(writer, "ERROR  ", flag)
 }
 
 func Trace(v ...interface{}) {

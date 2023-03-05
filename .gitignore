@@ -129,3 +129,4 @@ querydsl/
 .DS_Store
 
 *.log
+*.exe

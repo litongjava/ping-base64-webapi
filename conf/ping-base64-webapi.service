@@ -1,12 +1,13 @@
 [Unit]
-Description=Frp Client Service
+Description=ping-base64-webapi
 After=network.target
 
 [Service]
 Type=simple
-User=nobody
+User=root
 Restart=on-failure
 RestartSec=5s
+WorkingDirectory = /opt/ping-base64-webapi
 ExecStart=/opt/ping-base64-webapi/ping-base64-webapi
 
 [Install]
