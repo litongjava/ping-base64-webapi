@@ -1,22 +1,78 @@
 package controller
 
 import (
-	"archive/zip"
-	"bytes"
-	"golang.org/x/text/encoding/simplifiedchinese"
-	"golang.org/x/text/transform"
-	"io"
-	"io/ioutil"
+	"encoding/json"
+	"fmt"
 	"net/http"
-	"os"
-	"path/filepath"
 	"ping-base64-webapi/log"
+	"ping-base64-webapi/services"
+	"ping-base64-webapi/utils"
 )
 
 func registerUnzipRouter() {
 	http.HandleFunc("/file/upload-unzip/", handleUploadUnzip)
+	http.HandleFunc("/file/upload-run/", handleUploadRun)
 }
 
+//上传文件,放到指定目录,并运行脚本
+func handleUploadRun(w http.ResponseWriter, r *http.Request) {
+	if r.Method != "POST" {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+	file, header, err := r.FormFile("file")
+	//将压缩包移动到的文件夹
+	movedDir := r.FormValue("m")
+	// 获取解压路径
+	targetDir := r.FormValue("d")
+	//运行的命令
+	cmd := r.FormValue("c")
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	defer file.Close()
+
+	if movedDir == "" {
+		log.Info("Don't find m from request parameters")
+	} else {
+		b, err := utils.MoveFile(file, movedDir, header.Filename)
+		if b {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+	}
+
+	if targetDir == "" {
+		log.Info("Don't find d from request parameters")
+	} else {
+		length := r.ContentLength
+		b, err := utils.ExtractFile(file, targetDir, length)
+		if b {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+	}
+	//执行命令
+	if cmd == "" {
+		log.Info("Don't find c from request parameters")
+	} else {
+		result := services.RunWrapperCommand(cmd)
+		jsonBytes, err := json.Marshal(result)
+		if err != nil {
+			log.Info("err", err.Error())
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		_, err = fmt.Fprintln(w, string(jsonBytes))
+		if err != nil {
+			return
+		}
+	}
+
+}
+
+//上传文件并解压
 func handleUploadUnzip(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "POST" {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
@@ -36,62 +92,11 @@ func handleUploadUnzip(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// 创建解压路径
-	err = os.MkdirAll(targetDir, 0755)
-	if err != nil {
+	length := r.ContentLength
+	b, err := utils.ExtractFile(file, targetDir, length)
+	if b {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
-	}
-
-	// 解压文件
-	reader, err := zip.NewReader(file, r.ContentLength)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	for _, f := range reader.File {
-		filename := f.Name
-		i := bytes.NewReader([]byte(filename))
-		decoder := transform.NewReader(i, simplifiedchinese.GB18030.NewDecoder())
-		content, _ := ioutil.ReadAll(decoder)
-		filename = string(content)
-		log.Info("filename:", filename)
-		path := filepath.Join(targetDir, filename)
-		if f.FileInfo().IsDir() {
-			err = os.MkdirAll(path, f.Mode())
-			if err != nil {
-				http.Error(w, err.Error(), http.StatusInternalServerError)
-				return
-			}
-			continue
-		}
-
-		err = os.MkdirAll(filepath.Dir(path), 0755)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-
-		unzippedFile, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, f.Mode())
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-		defer unzippedFile.Close()
-
-		zippedFile, err := f.Open()
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-		defer zippedFile.Close()
-
-		_, err = io.Copy(unzippedFile, zippedFile)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
 	}
 
 	w.WriteHeader(http.StatusOK)

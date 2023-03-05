@@ -36,12 +36,12 @@ func handleUpload(writer http.ResponseWriter, request *http.Request) {
 		os.MkdirAll(savePath, os.ModePerm)
 	}
 	//读取文件名
-	log.Info("filename", header.Filename)
+	log.Info("dstFilePath", header.Filename)
 
-	//上传目录 uploadPath+/+日期+uuid+filename
-	filename := savePath + "/" + header.Filename
+	//上传目录 uploadPath+/+日期+uuid+dstFilePath
+	dstFilePath := savePath + "/" + header.Filename
 	//创建文件
-	openFile, err := os.OpenFile(filename, os.O_WRONLY|os.O_CREATE, 0666)
+	openFile, err := os.OpenFile(dstFilePath, os.O_WRONLY|os.O_CREATE, 0666)
 	if err != nil {
 		log.Error(err.Error())
 		return

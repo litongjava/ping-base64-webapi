@@ -16,18 +16,36 @@ var (
 )
 
 func init() {
-	file, err := os.OpenFile("/opt/ping-base64-webapi/out.log", os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0666)
-	if err != nil {
-		log.Fatalln("can't open log file", err)
-	}
+	writer := getWriter("/opt/ping-base64-webapi", "ping-base64-webapi.log")
+
 	flag := log.Ldate | log.Lmicroseconds | log.Lmsgprefix | log.Lshortfile
-	writer := io.MultiWriter(file, os.Stdout)
+
 	LoggerTrace = log.New(ioutil.Discard, "TRACE  ", flag)
 	LoggerDebug = log.New(os.Stdout, "DDEBUG  ", flag)
-	LoggerInfo = log.New(file, "INFO  ", flag)
+	LoggerInfo = log.New(writer, "INFO  ", flag)
 	LoggerWarn = log.New(os.Stdout, "EARN ", flag)
-	//writer := io.MultiWriter(os.Stdout)
 	LoggerError = log.New(writer, "ERROR  ", flag)
+}
+
+//写入的文件
+func getWriter(logPath string, logFilename string) io.Writer {
+	err := os.MkdirAll(logPath, 0755)
+	var file *os.File = nil
+	if err != nil {
+		log.Println(err.Error())
+	} else {
+		file, err = os.OpenFile(logPath+"/"+logFilename, os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0666)
+		if err != nil {
+			log.Println("can't open log file", err)
+		}
+	}
+	var writer io.Writer = nil
+	if file == nil {
+		writer = io.MultiWriter(file, os.Stdout)
+	} else {
+		writer = io.MultiWriter(os.Stdout)
+	}
+	return writer
 }
 
 func Trace(v ...interface{}) {
