@@ -23,14 +23,26 @@ func MoveFile(file multipart.File, movedDir string, dstFilename string) (bool, e
 	//移动到这个文件夹
 	dstFilePath := movedDir + "/" + dstFilename
 	log.Info("dstFilePath:", dstFilePath)
-	//创建文件
-	openFile, err := os.OpenFile(dstFilePath, os.O_WRONLY|os.O_CREATE, 0666)
+	err = os.Remove(dstFilePath)
+	if err != nil {
+		log.Error(err.Error())
+		return true, err
+	}
+	//创建文件,移动文件只需要创建,如果添加其他选项会出现错误
+	openFile, err := os.OpenFile(dstFilePath, os.O_CREATE|os.O_WRONLY, 0666)
 	if err != nil {
 		log.Error(err.Error())
 		return true, err
 	}
 	defer openFile.Close()
-	io.Copy(openFile, file)
+
+	n, err := io.Copy(openFile, file)
+	if err != nil {
+		log.Error(err.Error())
+		return true, err
+	} else {
+		log.Info(n)
+	}
 	return false, nil
 }
 

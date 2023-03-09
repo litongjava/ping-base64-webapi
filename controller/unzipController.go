@@ -34,7 +34,7 @@ func handleUploadRun(w http.ResponseWriter, r *http.Request) {
 	defer file.Close()
 
 	if movedDir == "" {
-		log.Info("Don't find m from request parameters")
+		log.Info("Not find m from request parameters")
 	} else {
 		b, err := utils.MoveFile(file, movedDir, header.Filename)
 		if b {
@@ -44,7 +44,7 @@ func handleUploadRun(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if targetDir == "" {
-		log.Info("Don't find d from request parameters")
+		log.Info("Not find d from request parameters")
 	} else {
 		length := r.ContentLength
 		b, err := utils.ExtractFile(file, targetDir, length)
@@ -55,8 +55,9 @@ func handleUploadRun(w http.ResponseWriter, r *http.Request) {
 	}
 	//执行命令
 	if cmd == "" {
-		log.Info("Don't find c from request parameters")
+		log.Info("Not find c from request parameters")
 	} else {
+		log.Info("cmd:", cmd)
 		result := services.RunWrapperCommand(cmd)
 		jsonBytes, err := json.Marshal(result)
 		if err != nil {

@@ -7,8 +7,8 @@ Type=simple
 User=root
 Restart=on-failure
 RestartSec=5s
-WorkingDirectory = /opt/ping-base64-webapi
-ExecStart=/opt/ping-base64-webapi/ping-base64-webapi
+WorkingDirectory = /root/code/ping-base64-webapi
+ExecStart=/root/code/ping-base64-webapi/ping-base64-webapi
 
 [Install]
 WantedBy=multi-user.target
