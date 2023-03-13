@@ -1,0 +1,14 @@
+[Unit]
+Description=ping-base64-webapi
+After=network.target
+
+[Service]
+Type=simple
+User=appadmin
+Restart=on-failure
+RestartSec=5s
+WorkingDirectory = /home/appadmin/code/ping-base64-webapi
+ExecStart=/home/appadmin/code/ping-base64-webapi/ping-base64-webapi
+
+[Install]
+WantedBy=multi-user.target

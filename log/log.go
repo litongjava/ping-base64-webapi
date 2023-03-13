@@ -16,7 +16,7 @@ var (
 )
 
 func init() {
-	writer := getWriter("/opt/ping-base64-webapi", "ping-base64-webapi.log")
+	writer := getWriter("~/ping-base64-webapi", "ping-base64-webapi.log")
 
 	flag := log.Ldate | log.Lmicroseconds | log.Lmsgprefix | log.Lshortfile
 
