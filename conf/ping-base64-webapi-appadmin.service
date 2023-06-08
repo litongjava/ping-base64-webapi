@@ -7,8 +7,8 @@ Type=simple
 User=appadmin
 Restart=on-failure
 RestartSec=5s
-WorkingDirectory = /home/appadmin/code/ping-base64-webapi
-ExecStart=/home/appadmin/code/ping-base64-webapi/ping-base64-webapi
+WorkingDirectory = /home/appadmin/go/bin
+ExecStart=/home/appadmin/go/bin/ping-base64-webapi
 
 [Install]
 WantedBy=multi-user.target

@@ -15,9 +15,9 @@ VERSION = '1.3.5'
 # 部署环境 生产prod, 测试test，开发dev
 ENVIRONMENT = 'test'
 # 后端应用部署根目录
-BASE_WEBAPP_DIR = '/data/apps/webapps/ztbjg'
+BASE_WEBAPP_DIR = '/data/apps/webapps'
 # 前端应用部署根目录
-BASE_FRONTEND_DIR = '/data/apps/web/ztbjg'
+BASE_FRONTEND_DIR = '/data/apps/web'
 # 合法操作用户
 LEGAL_OPERATOR = 'appadmin'
 #等待应用启动秒数
