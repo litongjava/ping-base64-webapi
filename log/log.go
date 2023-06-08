@@ -16,7 +16,7 @@ var (
 )
 
 func init() {
-	writer := getWriter("~/ping-base64-webapi", "ping-base64-webapi.log")
+	writer := getWriter("logs", "ping-base64-webapi.log")
 
 	flag := log.Ldate | log.Lmicroseconds | log.Lmsgprefix | log.Lshortfile
 
@@ -27,7 +27,7 @@ func init() {
 	LoggerError = log.New(writer, "ERROR  ", flag)
 }
 
-//写入的文件
+// 写入的文件
 func getWriter(logPath string, logFilename string) io.Writer {
 	err := os.MkdirAll(logPath, 0755)
 	var file *os.File = nil

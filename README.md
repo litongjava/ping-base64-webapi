@@ -76,3 +76,8 @@ nginx s reload  bmdpbnggLXMgcmVsb2Fk
 systemctl status nginx c3lzdGVtY3RsIHN0YXR1cyBuZ2lueA==
 systemctl restart nginx c3lzdGVtY3RsIHJlc3RhcnQgbmdpbng=
 ```
+客户端上传文件并启动
+```
+ping-base64-client.exe -url http://192.168.3.9:10405/file/upload-run/ -file target\gaozhuang-mq-listener-1.0.zip -m /data/apps/webapps/package -c "python2.7 /data/apps/webapps/package/deploy-root.py -s chaofu -m gaozhuang
+-pg gaozhuang-mq-listener-1.0.zip -p 8064 -a update"
+```
