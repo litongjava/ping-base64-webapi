@@ -13,7 +13,7 @@ import (
 	"ping-base64-webapi/log"
 )
 
-//移动文件
+// 移动文件
 func MoveFile(file multipart.File, movedDir string, dstFilename string) (bool, error) {
 	// 创建移动路径
 	err := os.MkdirAll(movedDir, 0755)
@@ -26,7 +26,12 @@ func MoveFile(file multipart.File, movedDir string, dstFilename string) (bool, e
 	err = os.Remove(dstFilePath)
 	if err != nil {
 		log.Error(err.Error())
-		return true, err
+		if os.IsNotExist(err) {
+			log.LoggerInfo.Println("ignore this error")
+		} else {
+			return true, err
+		}
+
 	}
 	//创建文件,移动文件只需要创建,如果添加其他选项会出现错误
 	openFile, err := os.OpenFile(dstFilePath, os.O_CREATE|os.O_WRONLY, 0666)
@@ -98,7 +103,7 @@ func ExtractFile(file multipart.File, targetDir string, length int64) (bool, err
 	return false, nil
 }
 
-//获取中文名称
+// 获取中文名称
 func GetChineseName(filename string) string {
 	i := bytes.NewReader([]byte(filename))
 	decoder := transform.NewReader(i, simplifiedchinese.GB18030.NewDecoder())

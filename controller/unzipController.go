@@ -14,7 +14,7 @@ func registerUnzipRouter() {
 	http.HandleFunc("/file/upload-run/", handleUploadRun)
 }
 
-//上传文件,放到指定目录,并运行脚本
+// 上传文件,放到指定目录,并运行脚本
 func handleUploadRun(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "POST" {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
@@ -73,7 +73,7 @@ func handleUploadRun(w http.ResponseWriter, r *http.Request) {
 
 }
 
-//上传文件并解压
+// 上传文件并解压
 func handleUploadUnzip(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "POST" {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
