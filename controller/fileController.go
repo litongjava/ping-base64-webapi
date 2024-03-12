@@ -18,7 +18,7 @@ func registerFileRouter() {
 	http.HandleFunc("/file/download/", handleDownload)
 }
 
-//上传文件
+// 上传文件
 func handleUpload(writer http.ResponseWriter, request *http.Request) {
 	file, header, err := request.FormFile("file")
 	if err != nil {
@@ -52,7 +52,7 @@ func handleUpload(writer http.ResponseWriter, request *http.Request) {
 	fmt.Fprintln(writer, dateString+"/"+uuidString)
 }
 
-//下载文件
+// 下载文件
 func handleDownload(writer http.ResponseWriter, request *http.Request) {
 	subDir, done := getId(writer, request)
 	if done {
@@ -77,7 +77,7 @@ func handleDownload(writer http.ResponseWriter, request *http.Request) {
 	writer.Write(bytes)
 }
 
-//获取文件名
+// 获取文件名
 func getFilename(writer http.ResponseWriter, savePath string) (string, bool) {
 	fileInfoList, err := ioutil.ReadDir(savePath)
 	if err != nil {

@@ -7,7 +7,6 @@ import (
 	"ping-base64-webapi/log"
 	"ping-base64-webapi/model"
 	"ping-base64-webapi/utils"
-	"strings"
 )
 
 func RunWrapperCommand(command string) model.CommandResult {
@@ -16,7 +15,7 @@ func RunWrapperCommand(command string) model.CommandResult {
 		result = utils.RunComamnd("nginx", "-s", "reload")
 	} else if "nginx-t" == command {
 		result = utils.RunComamnd("nginx", "-t")
-	} else if len(command) > 100 {
+	} else {
 		//创建一个文件
 		hash := md5.New()
 		hash.Write([]byte(command))
@@ -51,9 +50,6 @@ func RunWrapperCommand(command string) model.CommandResult {
 		}
 		log.Info("run script:", "sh", dstFilePath)
 		result = utils.RunComamnd("sh", dstFilePath)
-	} else {
-		slice := strings.Split(command, " ")
-		result = utils.RunComamnd(slice[0], slice[1:]...)
 	}
 	return result
 }
